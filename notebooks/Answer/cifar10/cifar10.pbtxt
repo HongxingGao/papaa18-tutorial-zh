@@ -1,0 +1,132 @@
+
+name: "CifarNet"
+node {
+  name: "img_input"
+  op: "Input"
+  device: CPU
+  type: T_FLOAT
+  input_op_param {
+    shape {
+      dim: 20
+      dim: 32
+      dim: 32
+      dim: 3
+    }
+  }
+}
+node {
+  name: "CifarNet/conv1"
+  input: "img_input"
+  op: "Conv2D"
+  device: CPU
+  type: T_FLOAT
+  conv2d_op_param {
+    depth: 64
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    activation_fn: "Relu"
+  }
+}
+node {
+  name: "CifarNet/pool1"
+  input: "CifarNet/conv1"
+  op: "MaxPool2D"
+  device: CPU
+  type: T_FLOAT
+  max_pool2d_op_param {
+    kernel_size: 2
+    stride: 2
+  }
+}
+node {
+  name: "CifarNet/norm1"
+  input: "CifarNet/pool1"
+  op: "LRN"
+  device: CPU
+  type: T_FLOAT
+  lrn_op_param {
+    depth_radius: 4
+    bias: 1.0
+    alpha: 0.00011111111
+    beta: 0.75
+  }
+}
+node {
+  name: "CifarNet/conv2"
+  input: "CifarNet/norm1"
+  op: "Conv2D"
+  device: CPU
+  type: T_FLOAT
+  conv2d_op_param {
+    depth: 64
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    activation_fn: "Relu"
+  }
+}
+node {
+  name: "CifarNet/norm2"
+  input: "CifarNet/conv2"
+  op: "LRN"
+  device: CPU
+  type: T_FLOAT
+  lrn_op_param {
+    depth_radius: 4
+    bias: 1.0
+    alpha: 0.00011111111
+    beta: 0.75
+  }
+}
+node {
+  name: "CifarNet/pool2"
+  input: "CifarNet/norm2"
+  op: "MaxPool2D"
+  device: CPU
+  type: T_FLOAT
+  max_pool2d_op_param {
+    kernel_size: 2
+    stride: 2
+  }
+}
+node {
+  name: "CifarNet/flatten"
+  input: "CifarNet/pool2"
+  op: "Flatten"
+  device: CPU
+  type: T_FLOAT
+}
+node {
+  name: "CifarNet/fc3"
+  input: "CifarNet/flatten"
+  op: "FullyConnected"
+  device: CPU
+  type: T_FLOAT
+  fullyconnected_op_param {
+    rows: 384
+    activation_fn: "Relu"
+  }
+}
+node {
+  name: "CifarNet/fc4"
+  input: "CifarNet/fc3"
+  op: "FullyConnected"
+  device: CPU
+  type: T_FLOAT
+  fullyconnected_op_param {
+    rows: 192
+    activation_fn: "Relu"
+  }
+}
+node {
+  name: "CifarNet/logits"
+  input: "CifarNet/fc4"
+  op: "FullyConnected"
+  device: CPU
+  type: T_FLOAT
+  fullyconnected_op_param {
+    rows: 10
+    activation_fn: ""
+  }
+}

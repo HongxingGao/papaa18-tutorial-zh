@@ -1,0 +1,11 @@
+# virtual env
+venv/
+
+# python compilation files
+*.pyc
+/dist/
+/*.egg-info
+
+.vscode/
+
+build/

@@ -1,0 +1,96 @@
+name: "CNN_MNIST"
+node {
+  name: "img_input"
+  op: "Input"
+  device: CPU
+  type: T_FLOAT
+  input_op_param {
+    shape {
+      dim: 50
+      dim: 28
+      dim: 28
+      dim: 1
+    }
+  }
+}
+node {
+  name: "conv1"
+  input: "img_input"
+  op: "Conv2D"
+  device: CPU
+  type: T_FLOAT
+  conv2d_op_param {
+    depth: 32
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    activation_fn: "Relu"
+    use_bias: true
+  }
+}
+node {
+  name: "pool1"
+  input: "conv1"
+  op: "MaxPool2D"
+  device: CPU
+  type: T_FLOAT
+  max_pool2d_op_param {
+    kernel_size: 2
+    stride: 2
+  }
+}
+node {
+  name: "conv2"
+  input: "pool1"
+  op: "Conv2D"
+  device: CPU
+  type: T_FLOAT
+  conv2d_op_param {
+    depth: 64
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    activation_fn: "Relu"
+    use_bias: true
+  }
+}
+node {
+  name: "pool2"
+  input: "conv2"
+  op: "MaxPool2D"
+  device: CPU
+  type: T_FLOAT
+  max_pool2d_op_param {
+    kernel_size: 2
+    stride: 2
+  }
+}
+node {
+  name: "flatten"
+  input: "pool2"
+  op: "Flatten"
+  device: CPU
+  type: T_FLOAT
+}
+node {
+  name: "fc3"
+  input: "flatten"
+  op: "FullyConnected"
+  device: CPU
+  type: T_FLOAT
+  fullyconnected_op_param {
+    rows: 1024
+    activation_fn: "Relu"
+  }
+}
+node {
+  name: "fc4"
+  input: "fc3"
+  op: "FullyConnected"
+  device: CPU
+  type: T_FLOAT
+  fullyconnected_op_param {
+    rows: 10
+    activation_fn: ""
+  }
+}

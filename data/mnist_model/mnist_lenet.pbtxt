@@ -1,0 +1,145 @@
+name: ""
+node {
+  name: "img"
+  op: "Input"
+  device: CPU
+  type: T_FLOAT
+  input_op_param {
+    shape {
+      dim: 1
+      dim: 1
+      dim: 28
+      dim: 28
+    }
+  }
+}
+node {
+  name: "Reshape"
+  input: "img"
+  op: "Reshape"
+  device: CPU
+  type: T_FLOAT
+  reshape_op_param {
+    shape {
+      dim: 1
+      dim: 1
+      dim: 28
+      dim: 28
+    }
+  }
+}
+node {
+  name: "conv2d/conv2d"
+  input: "Reshape"
+  op: "Conv2D"
+  device: CPU
+  type: T_FLOAT
+  conv2d_op_param {
+    depth: 32
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    activation_fn: "Relu"
+    use_maxpool_2x2: false
+    use_batch_norm: false
+    use_bias: true
+    use_relu: true
+  }
+}
+node {
+  name: "max_pooling2d/maxpool"
+  input: "conv2d/conv2d"
+  op: "MaxPool2D"
+  device: CPU
+  type: T_FLOAT
+  max_pool2d_op_param {
+    kernel_size: 2
+    stride: 2
+  }
+}
+node {
+  name: "conv2d_2/conv2d"
+  input: "max_pooling2d/maxpool"
+  op: "Conv2D"
+  device: CPU
+  type: T_FLOAT
+  conv2d_op_param {
+    depth: 64
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    activation_fn: "Relu"
+    use_maxpool_2x2: false
+    use_batch_norm: false
+    use_bias: true
+    use_relu: true
+  }
+}
+node {
+  name: "max_pooling2d_2/maxpool"
+  input: "conv2d_2/conv2d"
+  op: "MaxPool2D"
+  device: CPU
+  type: T_FLOAT
+  max_pool2d_op_param {
+    kernel_size: 2
+    stride: 2
+  }
+}
+node {
+  name: "Reshape_1"
+  input: "max_pooling2d_2/maxpool"
+  op: "Flatten"
+  device: CPU
+  type: T_FLOAT
+  flatten_op_param {
+    shape {
+      dim: 1
+      dim: 64
+      dim: 7
+      dim: 7
+    }
+  }
+}
+node {
+  name: "dense/matmul"
+  input: "Reshape_1"
+  op: "FullyConnected"
+  device: CPU
+  type: T_FLOAT
+  fullyconnected_op_param {
+    rows: 1024
+    columns: 3136
+    batch_size: 1
+    activation_fn: "Relu"
+    use_relu: true
+  }
+}
+node {
+  name: "dense_2/matmul"
+  input: "dense/matmul"
+  op: "FullyConnected"
+  device: CPU
+  type: T_FLOAT
+  fullyconnected_op_param {
+    rows: 10
+    columns: 1024
+    batch_size: 1
+    activation_fn: ""
+    use_relu: false
+  }
+}
+node {
+  name: "ArgMax"
+  input: "dense_2/matmul"
+  op: "ArgMax"
+  device: CPU
+  type: T_FLOAT
+  argmax_op_param {
+    shape {
+      dim: 1
+      dim: 10
+    }
+    axis: 1
+  }
+}

@@ -1,0 +1,5 @@
+name: "RAINMAN_BOARD_V2"
+num_lut: 218600
+num_ff: 437200
+num_bram: 545
+num_dsp: 900
